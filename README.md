@@ -1,5 +1,5 @@
 # tracc_testapp
-Codigo para maquina de ensayo de traccion DIY con arduino MEGA y comunicacion serial con python
+Codigo para maquina de ensayo de traccion DIY con arduino MEGA y comunicacion serial con python. La app de escritorio permite cominucarse con Arduino y guardar los datos del ensayo de traccion en un csv.
 
 Librerias Arduino
 Encoder.h -->Libreria de Paul Stoffregen en Gestor de librerias Arduino IDE
