@@ -125,5 +125,5 @@ if __name__ == '__main__':
                 break
                 
         except:
-            print("opcion no valida....")
+            print("opcion no valida...")
         
