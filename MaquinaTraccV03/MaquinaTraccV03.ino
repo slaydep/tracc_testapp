@@ -24,10 +24,10 @@ void calibrate();
 
 const int HX711_dout = 4; //mcu > HX711 dout pin ALTA
 const int HX711_sck = 5; //mcu > HX711 sck pin ALTA
-const int HX711_dout2 = 6; //mcu > HX711 dout pin BAJA
-const int HX711_sck2 = 7; //mcu > HX711 sck pin BAJA
+//const int HX711_dout2 = 6; //mcu > HX711 dout pin BAJA
+//const int HX711_sck2 = 7; //mcu > HX711 sck pin BAJA
 float calibrationValue = -16.58;
-float calibrationValue2 = 1.0;
+//float calibrationValue2 = 1.0;
 HX711_ADC LoadCellalta(HX711_dout, HX711_sck); //carga Alta
 //HX711_ADC LoadCellbaja(HX711_dout2, HX711_sck2); //carga Baja
 bool bascula = false;
@@ -113,7 +113,7 @@ void Control(void *pvParameters)  // Tarea de control
     if (opc == 1) {
       calibrate();
     }
-    if (opc == 3)//switch para activar y seactivar las tareas
+    if (opc == 2)//switch para activar y seactivar las tareas
     {
       Serial.println("establecer velocidad ");
       while (true) {
@@ -125,7 +125,7 @@ void Control(void *pvParameters)  // Tarea de control
         }
       }
     }
-    if (opc == 4)  //switch para activar y seactivar las tareas
+    if (opc == 3)  //switch para activar y seactivar las tareas
     {
       if (!bascula) { //si esta apagada la enciende
         xTaskCreate(Bascula, "Tarea de bascula", 128, NULL, 3, &bascula_Handler);
@@ -137,7 +137,7 @@ void Control(void *pvParameters)  // Tarea de control
       }
 
     }
-    if (opc == 5)//switch para activar y seactivar las tareas
+    if (opc == 4)//switch para activar y seactivar las tareas
     {
       if (!test) {
         xTaskCreate(Test, "Tarea de Test", 128, NULL, 3, &test_Handler);
@@ -149,7 +149,7 @@ void Control(void *pvParameters)  // Tarea de control
         digitalWrite(EnPin, HIGH);
       }
     }
-    if (opc == 6)//switch para activar y seactivar las tareas
+    if (opc == 5)//switch para activar y seactivar las tareas
     {
       if (!enco) {
         xTaskCreate(Enco, "Tarea de Encoder", 128, NULL, 5, &enco_Handler);
@@ -169,9 +169,10 @@ void Bascula(void *pvParameters) // Tarea bascula (para pruebas)
 {
   (void) pvParameters;
   int op;
-  static boolean newDataReady = 0;
+  static boolean newDataReady = false;
   const int serialPrintInterval = 100; //increase value to slow down serial print activity
-  while (true) {
+  t = millis();
+  while (true) { 
     // check for new data/start next conversion:
     if (LoadCellalta.update()) newDataReady = true;
 
@@ -181,7 +182,7 @@ void Bascula(void *pvParameters) // Tarea bascula (para pruebas)
         float i = LoadCellalta.getData();
         Serial.print("Carga: ");
         Serial.println(i);
-        newDataReady = 0;
+        newDataReady = false;
         t = millis();
       }
     }
@@ -194,6 +195,7 @@ void Test(void *pvParameters) // Tarea test
   int op;
   float i;
   long newPosition;
+  t = millis();
   static boolean newDataReady = 0;
   const int serialPrintInterval = 1; //incrementar el valor para disminuir la frecuencia del envio serial
   digitalWrite(EnPin, LOW);
@@ -213,7 +215,7 @@ void Test(void *pvParameters) // Tarea test
         //Serial.print(" def: ");
         Serial.print(",");
         Serial.println(newPosition);
-        newDataReady = 0;
+        newDataReady = false;
         t = millis();
       }
     }
